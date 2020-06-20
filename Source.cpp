@@ -11,7 +11,6 @@ using namespace std;
 class Checker {
 public:
 	bool isQueen = false;
-	bool isAlive = true;
 	bool isEmpty = true;
 	bool isWhite;
 	char space = EMPTY;
@@ -103,7 +102,27 @@ bool enemiesAround(Checker** field, int row, int column) {
 	return false;
 }
 
-/*int canHit (Checker** field, int numPlayer) {
+bool canHit(Checker** field, int row, int column) {
+	if (row - 2 >= 0 && column - 2 >= 0) {
+		if (field[row - 2][column - 2].isEmpty == true) {
+			return true;
+		}
+		if (row + 2 < SIZE && column + 2 < SIZE) {
+			if (field[row + 2][column + 2].isEmpty == true) {
+				return true;
+			}
+			if (field[row + 2][column - 2].isEmpty == true) {
+				return true;
+			}
+			if (field[row - 2][column + 2].isEmpty == true) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/*int shouldHit (Checker** field, int numPlayer) {
 	int result = -1;
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
