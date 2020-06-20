@@ -75,30 +75,34 @@ void startingField(Checker** field) {
 }
 
 bool enemiesAround(Checker** field, int row, int column) {
-	if (row - 1 >= 0 && column - 1 >= 0) {	
-			if (field[row - 1][column - 1].isEmpty == false && field[row][column].isEmpty == false) {
-				if (field[row - 1][column - 1].isWhite != field[row][column].isWhite) {
-					return true;
-				}
+	if (row - 1 >= 0 && column - 1 >= 0) {
+		if (field[row - 1][column - 1].isEmpty == false && field[row][column].isEmpty == false) {
+			if (field[row - 1][column - 1].isWhite != field[row][column].isWhite) {
+				return true;
 			}
-			if (row + 1 < SIZE && column + 1 < SIZE) {
-				if (field[row + 1][column + 1].isEmpty == false && field[row][column].isEmpty == false) {
-					if (field[row + 1][column + 1].isWhite != field[row][column].isWhite) {
-						return true;
-					}
-				}
-				if (field[row - 1][column + 1].isEmpty == false && field[row][column].isEmpty == false) {
-					if (field[row - 1][column + 1].isWhite != field[row][column].isWhite) {
-						return true;
-					}
-				}
-				if (field[row + 1][column - 1].isEmpty == false && field[row][column].isEmpty == false) {
-					if (field[row + 1][column - 1].isWhite != field[row][column].isWhite) {
-						return true;
-					}
-				}
-			}	
+		}
 	}
+	if (row + 1 < SIZE && column + 1 < SIZE) {
+		if (field[row + 1][column + 1].isEmpty == false && field[row][column].isEmpty == false) {
+			if (field[row + 1][column + 1].isWhite != field[row][column].isWhite) {
+				return true;
+			}
+		}
+	}
+	if (row - 1 >= 0 && column + 1 < SIZE) {
+		if (field[row - 1][column + 1].isEmpty == false && field[row][column].isEmpty == false) {
+			if (field[row - 1][column + 1].isWhite != field[row][column].isWhite) {
+				return true;
+			}
+		}
+	}
+	if (row + 1 < SIZE && column - 1 >= 0){
+		if (field[row + 1][column - 1].isEmpty == false && field[row][column].isEmpty == false) {
+			if (field[row + 1][column - 1].isWhite != field[row][column].isWhite) {
+				return true;
+			}
+		}
+	}			
 	return false;
 }
 
@@ -107,18 +111,23 @@ bool canHit(Checker** field, int row, int column) {
 		if (field[row - 2][column - 2].isEmpty == true) {
 			return true;
 		}
-		if (row + 2 < SIZE && column + 2 < SIZE) {
-			if (field[row + 2][column + 2].isEmpty == true) {
-				return true;
-			}
-			if (field[row + 2][column - 2].isEmpty == true) {
-				return true;
-			}
+	}
+	if (row + 2 < SIZE && column + 2 < SIZE) {
+		if (field[row + 2][column + 2].isEmpty == true) {
+			return true;
+		}
+	}
+	if (row + 2 < SIZE && column - 2 >= 0) {
+		if (field[row + 2][column - 2].isEmpty == true) {
+			return true;
+		}
+	}
+	if (row - 2 >= 0 && column + 2 < SIZE) {
 			if (field[row - 2][column + 2].isEmpty == true) {
 				return true;
 			}
 		}
-	}
+
 	return false;
 }
 
@@ -127,6 +136,34 @@ bool shouldHit (Checker** field, int numPlayer) {
 		for (int j = 0; j < SIZE; j++) {
 			if (numPlayer % 2 == field[i][j].isWhite) {
 				if (enemiesAround(field, i, j) && canHit(field, i, j)) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool canRun(Checker** field, int numPlayer, int row, int column) {
+	if (numPlayer % 2 == field[row][column].isWhite) {
+		if (field[row][column].isQueen == true) {
+			if (row - 1 >= 0 && column - 1 >= 0) {
+				if (field[row - 1][column - 1].isEmpty == true) {
+					return true;
+				}
+			}
+			if (row + 1 < SIZE && column + 1 < SIZE) {
+				if (field[row + 1][column + 1].isEmpty == true) {
+					return true;
+				}
+			}
+			if (row + 1 < SIZE && column - 1 >= 0) {
+				if (field[row + 1][column + 1].isEmpty == true) {
+					return true;
+				}
+			}
+			if (row - 1 >= 0 && column + 1 < SIZE) {
+				if (field[row - 1][column + 1].isEmpty == true) {
 					return true;
 				}
 			}
@@ -161,8 +198,9 @@ int main() {
 				cin >> nowRow >> nowColumn;
 			}
 		}
-
-
+		else {
+			
+		}
 	}
 
 	return 0;
