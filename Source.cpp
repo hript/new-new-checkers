@@ -43,7 +43,11 @@ void showField(Checker** field) {
 					SetConsoleTextAttribute(hConsole, (WORD)((15 << 4) | 0));
 				}
 			}
+			cout << field[i][j].space << " ";
+			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			SetConsoleTextAttribute(hConsole, (WORD)((15 << 4) | 0));
 		}
+		cout << endl;
 	}
 }
 
@@ -72,10 +76,14 @@ void startingField(Checker** field) {
 }
 
 int main() {
+	system("color F0");
 	Checker** field = new Checker * [SIZE];
 	for (int i = 0; i < SIZE; i++) {
 		field[i] = new Checker[SIZE];
 	}
 
+	startingField(field);
+	showField(field);
 
+	return 0;
 }
