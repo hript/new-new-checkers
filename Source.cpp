@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string>
 #include<Windows.h>
 
 using namespace std;
@@ -11,7 +12,7 @@ class Checker {
 public:
 	bool isQueen = false;
 	bool isAlive = true;
-	bool isEmpty = false;
+	bool isEmpty = true;
 	bool isWhite;
 	char space = EMPTY;
 
@@ -55,7 +56,6 @@ void startingField(Checker** field) {
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
 			if (((i + j) % 2 == 0 && (i < 3)) || ((i + j) % 2 != 0 && (i >= 5))) {
-				field[i][j].isEmpty = true;
 				if (i < 3) {
 					if ((i + j) % 2 == 0) {
 						field[i][j].space = CHECKER;
@@ -75,15 +75,58 @@ void startingField(Checker** field) {
 	}
 }
 
+bool enemiesAround(Checker** field, int row, int column) {
+	if (row - 1 >= 0 && column - 1 >= 0) {	
+			if (field[row - 1][column - 1].isEmpty == false && field[row][column].isEmpty == false) {
+				if (field[row - 1][column - 1].isWhite != field[row][column].isWhite) {
+					return true;
+				}
+			}
+			if (row + 1 < SIZE && column + 1 < SIZE) {
+				if (field[row + 1][column + 1].isEmpty == false && field[row][column].isEmpty == false) {
+					if (field[row + 1][column + 1].isWhite != field[row][column].isWhite) {
+						return true;
+					}
+				}
+				if (field[row - 1][column + 1].isEmpty == false && field[row][column].isEmpty == false) {
+					if (field[row - 1][column + 1].isWhite != field[row][column].isWhite) {
+						return true;
+					}
+				}
+				if (field[row + 1][column - 1].isEmpty == false && field[row][column].isEmpty == false) {
+					if (field[row + 1][column - 1].isWhite != field[row][column].isWhite) {
+						return true;
+					}
+				}
+			}	
+	}
+	return false;
+}
+
+/*int canHit (Checker** field, int numPlayer) {
+	int result = -1;
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			if (numPlayer % 2 == field[i][j].isWhite) {
+				
+			}
+		}
+	}
+}*/
+
 int main() {
 	system("color F0");
 	Checker** field = new Checker * [SIZE];
 	for (int i = 0; i < SIZE; i++) {
 		field[i] = new Checker[SIZE];
 	}
-
 	startingField(field);
-	showField(field);
+
+	int numPlayer = 1;
+	string firstPlayer, secondPlayer;
+	cout << "First player name " << endl;
+	cin >> firstPlayer;
+	cout << "Second player name" << endl;
 
 	return 0;
 }
