@@ -122,16 +122,20 @@ bool canHit(Checker** field, int row, int column) {
 	return false;
 }
 
-/*int shouldHit (Checker** field, int numPlayer) {
+void shouldHit (Checker** field, int numPlayer, int* row, int* column) {
 	int result = -1;
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
 			if (numPlayer % 2 == field[i][j].isWhite) {
-				
+				if (enemiesAround(field, i, j) && canHit(field, i, j)) {
+					*row = i;
+					*column = j;
+					return;
+				}
 			}
 		}
 	}
-}*/
+}
 
 int main() {
 	system("color F0");
@@ -146,6 +150,13 @@ int main() {
 	cout << "First player name " << endl;
 	cin >> firstPlayer;
 	cout << "Second player name" << endl;
+
+	int nowRow = -1, nowColumn = -1;
+
+	while (1) {
+		shouldHit(field, numPlayer, &nowRow, &nowColumn);
+		if ( nowRow ==-1 && nowColumn ==-1)
+	}
 
 	return 0;
 }
