@@ -122,19 +122,17 @@ bool canHit(Checker** field, int row, int column) {
 	return false;
 }
 
-void shouldHit (Checker** field, int numPlayer, int* row, int* column) {
-	int result = -1;
+bool shouldHit (Checker** field, int numPlayer) {
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
 			if (numPlayer % 2 == field[i][j].isWhite) {
 				if (enemiesAround(field, i, j) && canHit(field, i, j)) {
-					*row = i;
-					*column = j;
-					return;
+					return true;
 				}
 			}
 		}
 	}
+	return false;
 }
 
 int main() {
@@ -151,11 +149,20 @@ int main() {
 	cin >> firstPlayer;
 	cout << "Second player name" << endl;
 
-	int nowRow = -1, nowColumn = -1;
+	int nowRow, nowColumn;
+	int nextRow, nextColumn;
 
 	while (1) {
-		shouldHit(field, numPlayer, &nowRow, &nowColumn);
-		if ( nowRow ==-1 && nowColumn ==-1)
+		if (shouldHit(field, numPlayer)) {
+			cout << "One checker should hit enemy. Choose right checker" << endl;
+			cin >> nowRow >> nowColumn;
+			while (!(enemiesAround(field, nowRow, nowColumn) && canHit(field, nowRow, nowColumn))) {
+				cout << "This checker can't run now. Try another one" << endl;
+				cin >> nowRow >> nowColumn;
+			}
+		}
+
+
 	}
 
 	return 0;
