@@ -74,7 +74,7 @@ void startingField(Checker** field) {
 	}
 }
 
-bool enemiesAround(Checker** field, int row, int column) {
+bool enemiesAroundChecker(Checker** field, int row, int column) {
 	if (row - 1 >= 0 && column - 1 >= 0) {
 		if (field[row - 1][column - 1].isEmpty == false && field[row][column].isEmpty == false) {
 			if (field[row - 1][column - 1].isWhite != field[row][column].isWhite) {
@@ -106,7 +106,7 @@ bool enemiesAround(Checker** field, int row, int column) {
 	return false;
 }
 
-bool canHit(Checker** field, int row, int column) {
+bool canHitChecker(Checker** field, int row, int column) {
 	if (row - 2 >= 0 && column - 2 >= 0) {
 		if (field[row - 2][column - 2].isEmpty == true) {
 			return true;
@@ -131,12 +131,50 @@ bool canHit(Checker** field, int row, int column) {
 	return false;
 }
 
+bool enemiesAroundQueen(Checker** field, int row, int column) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			if (((i + j == row + column) || (i - j == row - column)) && i != row && j != column) {
+				if (field[i][j].isEmpty == false && field[i][j].isWhite != field[i][j].isWhite) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool queenCanHit(Checker** field, int row, int column) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			if (((i + j == row + column) || (i - j == row - column)) && i != row && j != column) {
+				if (field[i][j].isEmpty == false && field[i][j].isWhite != field[i][j].isWhite) {
+					if (i - 1 >= 0 && j - 1 >= 0 && field[i][j].isEmpty == true) {
+						return true;
+					}
+					if (i - 1 >= 0 && j + 1 < SIZE && field[i][j].isEmpty == true) {
+						return true;
+					}
+					if (i + 1 < SIZE && j + 1 < SIZE && field[i][j].isEmpty == true) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+}
+
 bool shouldHit (Checker** field, int numPlayer) {
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
 			if (numPlayer % 2 == field[i][j].isWhite) {
-				if (enemiesAround(field, i, j) && canHit(field, i, j)) {
-					return true;
+				if (field[i][j].isQueen == false) {
+					if (enemiesAroundChecker(field, i, j) && canHitChecker(field, i, j)) {
+						return true;
+					}
+				}
+				else {
+
 				}
 			}
 		}
