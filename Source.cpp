@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define SIZE 8
+#define SIZE 9
 #define CHECKER '*'
 #define EMPTY '-'
 
@@ -53,9 +53,13 @@ void showField(Checker** field) {
 
 void startingField(Checker** field) {
 	for (int i = 0; i < SIZE; i++) {
-		for (int j = 0; j < SIZE; j++) {
-			if (((i + j) % 2 == 0 && (i < 3)) || ((i + j) % 2 != 0 && (i >= 5))) {
-				if (i < 3) {
+		field[0][i].space = i + '0';
+		field[0][i].isEmpty = false;
+		field[i][0].space = i + '0';
+		field[i][0].isEmpty = false;
+		for (int j = 1; j < SIZE; j++) {
+			if (((i + j) % 2 == 0 && (i <= 3) && (i > 0)) || ((i + j) % 2 != 0 && (i >= 6))) {
+				if (i <= 3) {
 					if ((i + j) % 2 == 0) {
 						field[i][j].space = CHECKER;
 						field[i][j].isWhite = false;
@@ -198,28 +202,25 @@ bool shouldHit (Checker** field, int numPlayer) {
 
 bool canRun(Checker** field, int numPlayer, int row, int column) {
 	if (numPlayer % 2 == field[row][column].isWhite) {
-		if (field[row][column].isQueen == true) {
-			if (row - 1 >= 0 && column - 1 >= 0) {
-				if (field[row - 1][column - 1].isEmpty == true) {
-					return true;
-				}
+			if (field[row - 1][column - 1].isEmpty == true) {
+				return true;
 			}
-			if (row + 1 < SIZE && column + 1 < SIZE) {
-				if (field[row + 1][column + 1].isEmpty == true) {
-					return true;
-				}
+			if (field[row + 1][column + 1].isEmpty == true) {
+				return true;
 			}
-			if (row + 1 < SIZE && column - 1 >= 0) {
-				if (field[row + 1][column + 1].isEmpty == true) {
-					return true;
-				}
+			if (field[row + 1][column + 1].isEmpty == true) {
+				return true;
 			}
-			if (row - 1 >= 0 && column + 1 < SIZE) {
-				if (field[row - 1][column + 1].isEmpty == true) {
-					return true;
-				}
+			if (field[row - 1][column + 1].isEmpty == true) {
+				return true;
 			}
-		}
+	}
+	return false;
+}
+
+bool yourChecker(Checker** field, int numPlayer, int row, int column) {
+	if (numPlayer % 2 == field[row][column].isWhite) {
+		return true;
 	}
 	return false;
 }
@@ -231,8 +232,17 @@ int main() {
 		field[i] = new Checker[SIZE];
 	}
 	startingField(field);
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			if (canHitChecker(field, i, j)) {
+				cout << i << " " << j<<endl;
+			}
+		}
+	}
+	showField(field);
+	system("pause");
 
-	int numPlayer = 1;
+/*	int numPlayer = 1;
 	string firstPlayer, secondPlayer;
 	cout << "First player name " << endl;
 	cin >> firstPlayer;
@@ -245,15 +255,32 @@ int main() {
 		if (shouldHit(field, numPlayer)) {
 			cout << "One checker should hit enemy. Choose right checker" << endl;
 			cin >> nowRow >> nowColumn;
-			while (!(enemiesAroundQueen(field, nowRow, nowColumn) && queenCanHit(field, nowRow, nowColumn))) {
-				cout << "This checker can't run now. Try another one" << endl;
+
+			while (!(enemiesAroundQueen(field, nowRow, nowColumn) && queenCanHit(field, nowRow, nowColumn) && yourChecker(field, numPlayer, nowRow, nowColumn))) {
+				if (yourChecker(field, numPlayer, nowRow, nowColumn)) {
+					cout << "This checker can't run now. Try another one" << endl;
+				}
+				else {
+					cout << "That's not your checker. Try again!" << endl;
+				}
+				cin >> nowRow >> nowColumn;
+			}
+
+			cout << "Choose next position" << endl;
+			cin >> nextRow >> nextColumn;
+			while ()
+
+		}
+		else {
+			cout << "Choose fighting checker" << endl;
+			cin >> nowRow >> nowColumn;
+
+			while (canRun(field, numPlayer, nowRow, nowColumn) == false) {
+				cout << "You can't move this checker. Try another one" << endl;
 				cin >> nowRow >> nowColumn;
 			}
 		}
-		else {
-			
-		}
 	}
-
+	*/
 	return 0;
 }
