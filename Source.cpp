@@ -149,19 +149,31 @@ bool queenCanHit(Checker** field, int row, int column) {
 		for (int j = 0; j < SIZE; j++) {
 			if (((i + j == row + column) || (i - j == row - column)) && i != row && j != column) {
 				if (field[i][j].isEmpty == false && field[i][j].isWhite != field[i][j].isWhite) {
-					if (i - 1 >= 0 && j - 1 >= 0 && field[i][j].isEmpty == true) {
-						return true;
+					if (i < row && j < column) {
+						if (i - 1 >= 0 && j - 1 >= 0 && field[i - 1][j - 1].isEmpty == true) {
+							return true;
+						}
 					}
-					if (i - 1 >= 0 && j + 1 < SIZE && field[i][j].isEmpty == true) {
-						return true;
+					if (i < row && j > column) {
+						if (i - 1 >= 0 && j + 1 < SIZE && field[i - 1][j + 1].isEmpty == true) {
+							return true;
+						}
 					}
-					if (i + 1 < SIZE && j + 1 < SIZE && field[i][j].isEmpty == true) {
-						return true;
+					if (i > row && j > column) {
+						if (i + 1 < SIZE && j + 1 < SIZE && field[i + 1][j + 1].isEmpty == true) {
+							return true;
+						}
+					}
+					if (i > row && j < column) {
+						if (i + 1 < SIZE && j - 1 < SIZE && field[i + 1][j - 1].isEmpty == true) {
+							return true;
+						}
 					}
 				}
 			}
 		}
 	}
+	return false;
 }
 
 bool shouldHit (Checker** field, int numPlayer) {
@@ -174,7 +186,9 @@ bool shouldHit (Checker** field, int numPlayer) {
 					}
 				}
 				else {
-
+					if (enemiesAroundQueen(field, i, j) && queenCanHit(field, i, j)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -231,7 +245,7 @@ int main() {
 		if (shouldHit(field, numPlayer)) {
 			cout << "One checker should hit enemy. Choose right checker" << endl;
 			cin >> nowRow >> nowColumn;
-			while (!(enemiesAround(field, nowRow, nowColumn) && canHit(field, nowRow, nowColumn))) {
+			while (!(enemiesAroundQueen(field, nowRow, nowColumn) && queenCanHit(field, nowRow, nowColumn))) {
 				cout << "This checker can't run now. Try another one" << endl;
 				cin >> nowRow >> nowColumn;
 			}
