@@ -1,6 +1,7 @@
-#include<iostream>
-#include<string>
-#include<Windows.h>
+#include <iostream>
+#include <string>
+#include <Windows.h>
+#include <cmath>
 
 using namespace std;
 
@@ -218,6 +219,136 @@ bool canRun(Checker** field, int numPlayer, int row, int column) {
 	return false;
 }
 
+bool checkEnemyBlockChecker(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	if (nowRow < nextRow && nowColumn < nextColumn) {
+		if (field[nowRow + 1][nextColumn + 1].isEmpty == false) {
+			if (field[nowRow + 1][nowColumn + 1].isWhite != field[nowRow][nowColumn].isWhite) {
+				return true;
+			}
+		}
+	}
+	if (nowRow < nextRow && nowColumn > nextColumn) {
+		if (field[nowRow + 1][nextColumn - 1].isEmpty == false) {
+			if (field[nowRow + 1][nowColumn - 1].isWhite != field[nowRow][nowColumn].isWhite) {
+				return true;
+			}
+		}
+	}
+	if (nowRow > nextRow && nowColumn < nextColumn) {
+		if (field[nowRow - 1][nextColumn + 1].isEmpty == false) {
+			if (field[nowRow - 1][nowColumn + 1].isWhite != field[nowRow][nowColumn].isWhite) {
+				return true;
+			}
+		}
+	}
+	if (nowRow > nextRow && nowColumn > nextColumn) {
+		if (field[nowRow - 1][nextColumn - 1].isEmpty == false) {
+			if (field[nowRow - 1][nowColumn - 1].isWhite != field[nowRow][nowColumn].isWhite) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool correctlyChosenNextBlockChecker(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	if (field[nowRow][nowColumn].isQueen == false) {
+		if (nowRow == nextRow && nowColumn == nextColumn) {
+			return false;
+		}
+		if (nextColumn >= SIZE || nextColumn <= 0 || nextRow >= SIZE || nextRow <= 0) {
+			return false;
+		}
+		if (field[nextRow][nextColumn].isEmpty == false) {
+			return false;
+		}
+		if ((nowRow + nowColumn != nextRow + nextColumn) || (nowRow - nowColumn != nextRow - nextColumn)) {
+			return false;
+		}
+		if (abs(nowRow - nextRow) > 2 && abs(nowColumn - nextColumn)) {
+			return false;
+		}
+		if (abs(nowRow - nextRow) == 2 && abs(nowColumn - nextColumn) == 2) {
+			if (checkEnemyBlockChecker(field, nowRow, nowColumn, nextRow, nextColumn) == false) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+bool checkAbilityRunQueen(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	if (nextRow > nowRow && nextColumn > nowColumn) {
+		for (int i = nowRow + 1; i < nextRow; i++) {
+			for (int j = nowColumn + 1; j < nextColumn; j++) {
+				if (i - j == nowRow - nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+						return false;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow > nowRow && nextColumn < nowColumn) {
+		for (int i = nowRow + 1; i < nextRow; i++) {
+			for (int j = nextColumn; j < nowColumn; j++) {
+				if (i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+						return false;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow < nowRow && nextColumn < nowColumn) {
+		for (int i = nextRow + 1; i < nowRow; i++) {
+			for (int j = nextColumn + 1; j < nowColumn; j++) {
+				if (i - j == nowRow - nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+						return false;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow < nowRow && nextColumn > nowColumn) {
+		for (int i = nextRow + 1; i < nowRow; i++) {
+			for (int j = nowColumn + 1; j < nextColumn; j++) {
+				if ( i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+
+bool correctlyChosenNextBlockQueen(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	if (field[nowRow][nowColumn].isQueen == true) {
+		if (nowRow == nextRow && nowColumn == nextColumn) {
+			return false;
+		}
+		if (nextColumn >= SIZE || nextColumn <= 0 || nextRow >= SIZE || nextRow <= 0) {
+			return false;
+		}
+		if (field[nextRow][nextColumn].isEmpty == false) {
+			return false;
+		}
+		if ((nowRow + nowColumn != nextRow + nextColumn) || (nowRow - nowColumn != nextRow - nextColumn)) {
+			return false;
+		}
+		if (!checkAbilityRunQueen(field, nowRow, nowColumn, nextRow, nextColumn)) {
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+
 bool yourChecker(Checker** field, int numPlayer, int row, int column) {
 	if (numPlayer % 2 == field[row][column].isWhite) {
 		return true;
@@ -232,17 +363,8 @@ int main() {
 		field[i] = new Checker[SIZE];
 	}
 	startingField(field);
-	for (int i = 0; i < SIZE; i++) {
-		for (int j = 0; j < SIZE; j++) {
-			if (canHitChecker(field, i, j)) {
-				cout << i << " " << j<<endl;
-			}
-		}
-	}
-	showField(field);
-	system("pause");
 
-/*	int numPlayer = 1;
+	int numPlayer = 1;
 	string firstPlayer, secondPlayer;
 	cout << "First player name " << endl;
 	cin >> firstPlayer;
@@ -256,7 +378,7 @@ int main() {
 			cout << "One checker should hit enemy. Choose right checker" << endl;
 			cin >> nowRow >> nowColumn;
 
-			while (!(enemiesAroundQueen(field, nowRow, nowColumn) && queenCanHit(field, nowRow, nowColumn) && yourChecker(field, numPlayer, nowRow, nowColumn))) {
+			while (!enemiesAroundQueen(field, nowRow, nowColumn) || !queenCanHit(field, nowRow, nowColumn) || !yourChecker(field, numPlayer, nowRow, nowColumn)) {
 				if (yourChecker(field, numPlayer, nowRow, nowColumn)) {
 					cout << "This checker can't run now. Try another one" << endl;
 				}
@@ -268,7 +390,19 @@ int main() {
 
 			cout << "Choose next position" << endl;
 			cin >> nextRow >> nextColumn;
-			while ()
+			
+			if (field[nowRow][nowColumn].isQueen) {
+				while (!correctlyChosenNextBlockQueen(field, nowRow, nowColumn, nextRow, nextColumn)) {
+					cout << "You can't move like that. Try again!" << endl;
+					cin >> nextRow >> nextColumn;
+				}
+			}
+			else {
+				while (!correctlyChosenNextBlockChecker(field, nowRow, nowColumn, nextRow, nextColumn)) {
+					cout << "You can't move like that. Try again!" << endl;
+					cin >> nextRow >> nextColumn;
+				}
+			}
 
 		}
 		else {
@@ -281,6 +415,6 @@ int main() {
 			}
 		}
 	}
-	*/
+	
 	return 0;
 }
