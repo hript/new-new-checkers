@@ -13,12 +13,9 @@ class Checker {
 public:
 	bool isQueen = false;
 	bool isEmpty = true;
-	bool isWhite;
+	bool isWhite = false;
 	char space = EMPTY;
 
-	void init(bool color) {
-		isWhite = color;
-	}
 };
 
 void showField(Checker** field) {
@@ -112,7 +109,7 @@ bool enemiesAroundChecker(Checker** field, int row, int column) {
 }
 
 bool canHitChecker(Checker** field, int row, int column) {
-	if (row - 2 >= 0 && column - 2 >= 0) {
+	if (row - 2 >= 1 && column - 2 >= 1) {
 		if (field[row - 2][column - 2].isEmpty == true) {
 			return true;
 		}
@@ -122,12 +119,12 @@ bool canHitChecker(Checker** field, int row, int column) {
 			return true;
 		}
 	}
-	if (row + 2 < SIZE && column - 2 >= 0) {
+	if (row + 2 < SIZE && column - 2 >= 1) {
 		if (field[row + 2][column - 2].isEmpty == true) {
 			return true;
 		}
 	}
-	if (row - 2 >= 0 && column + 2 < SIZE) {
+	if (row - 2 >= 1 && column + 2 < SIZE) {
 			if (field[row - 2][column + 2].isEmpty == true) {
 				return true;
 			}
@@ -351,16 +348,16 @@ bool correctlyChosenNextBlockQueen(Checker** field, int nowRow, int nowColumn, i
 void killEnemiesOnWayChecker(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
 	if (abs(nowRow - nextRow) == 2 && abs(nowColumn - nextColumn) == 2) {
 		if (nextRow < nowRow && nextColumn < nowColumn) {
-			field[nowRow - 1][nowColumn - 1].isEmpty == true;
+			field[nowRow - 1][nowColumn - 1].isEmpty = true;
 		}
 		if (nextRow < nowRow && nextColumn > nowColumn) {
-			field[nowRow - 1][nowColumn + 1].isEmpty == true;
+			field[nowRow - 1][nowColumn + 1].isEmpty = true;
 		}
 		if (nextRow > nowRow && nextColumn > nowColumn) {
-			field[nowRow + 1][nextColumn + 1].isEmpty == true;
+			field[nowRow + 1][nextColumn + 1].isEmpty = true;
 		}
 		if (nextRow > nowRow && nextColumn < nowColumn) {
-			field[nowRow + 1][nowColumn - 1].isEmpty == true;
+			field[nowRow + 1][nowColumn - 1].isEmpty = true;
 		}
 	}
 }
@@ -482,6 +479,27 @@ bool necessarilyKillEnemyQueen(Checker** field, int nowRow, int nowColumn, int n
 			}
 		}
 	}
+	return false;
+}
+
+bool out(Checker** field) {
+	bool flagWhite = false, flagBlack = false;
+	for (int i = 1; i < SIZE; i++) {
+		for (int j = 1; j < SIZE; j++) {
+			if (field[i][j].isEmpty == false) {
+				if (field[i][j].isWhite == true) {
+					flagWhite = true;
+				}
+				else {
+					flagBlack = true;
+				}
+			}
+		}
+	}
+	if (flagWhite == false || flagBlack == false) {
+		return true;
+	}
+	return false;
 }
 
 int main() {
@@ -497,11 +515,13 @@ int main() {
 	cout << "First player name " << endl;
 	cin >> firstPlayer;
 	cout << "Second player name" << endl;
+	cin >> secondPlayer;
 
 	int nowRow, nowColumn;
 	int nextRow, nextColumn;
 
-	while (1) {
+	while (!out(field)) {
+		showField(field);
 		if (shouldHit(field, numPlayer)) {
 			cout << "One checker should hit enemy. Choose right checker" << endl;
 			cin >> nowRow >> nowColumn;
