@@ -419,6 +419,24 @@ bool yourChecker(Checker** field, int numPlayer, int row, int column) {
 	return false;
 }
 
+void moveChecker(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	field[nextRow][nextColumn] = field[nowRow][nowColumn];
+	field[nowRow][nowColumn].isEmpty = false;
+}
+
+void queen(Checker** field, int nextRow, int nextColumn) {
+	if (field[nextRow][nextColumn].isWhite == true) {
+		if (nextRow = SIZE - 1) {
+			field[nextRow][nextColumn].isQueen = true;
+		}
+	}
+	else {
+		if (nextRow = 1) {
+			field[nextRow][nextColumn].isQueen = true;
+		}
+	}
+}
+
 int main() {
 	system("color F0");
 	Checker** field = new Checker * [SIZE];
@@ -454,6 +472,21 @@ int main() {
 			cout << "Choose next position" << endl;
 			cin >> nextRow >> nextColumn;
 			
+			
+
+		}
+		else {
+			cout << "Choose fighting checker" << endl;
+			cin >> nowRow >> nowColumn;
+
+			while (canRun(field, numPlayer, nowRow, nowColumn) == false) {
+				cout << "You can't move this checker. Try another one" << endl;
+				cin >> nowRow >> nowColumn;
+			}
+
+			cout << "Choose next position" << endl;
+			cin >> nextRow >> nextColumn;
+
 			if (field[nowRow][nowColumn].isQueen) {
 				while (!correctlyChosenNextBlockQueen(field, nowRow, nowColumn, nextRow, nextColumn)) {
 					cout << "You can't move like that. Try again!" << endl;
@@ -468,17 +501,9 @@ int main() {
 				}
 				killEnemiesOnWayChecker(field, nowRow, nowColumn, nextRow, nextColumn);
 			}
-
 		}
-		else {
-			cout << "Choose fighting checker" << endl;
-			cin >> nowRow >> nowColumn;
-
-			while (canRun(field, numPlayer, nowRow, nowColumn) == false) {
-				cout << "You can't move this checker. Try another one" << endl;
-				cin >> nowRow >> nowColumn;
-			}
-		}
+		moveChecker(field, nowRow, nowColumn, nextRow, nextColumn);
+		queen(field, nextRow, nextColumn);
 	}
 	
 	return 0;
