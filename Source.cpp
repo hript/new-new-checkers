@@ -3,11 +3,11 @@
 #include <Windows.h>
 #include <cmath>
 
-using namespace std;
-
 #define SIZE 9
 #define CHECKER '*'
 #define EMPTY '-'
+
+using namespace std;
 
 class Checker {
 public:
@@ -426,12 +426,12 @@ void moveChecker(Checker** field, int nowRow, int nowColumn, int nextRow, int ne
 
 void queen(Checker** field, int nextRow, int nextColumn) {
 	if (field[nextRow][nextColumn].isWhite == true) {
-		if (nextRow == SIZE - 1) {
+		if (nextRow == 1) {
 			field[nextRow][nextColumn].isQueen = true;
 		}
 	}
 	else {
-		if (nextRow == 1) {
+		if (nextRow == SIZE - 1) {
 			field[nextRow][nextColumn].isQueen = true;
 		}
 	}
@@ -521,9 +521,10 @@ int main() {
 			
 			if (field[nowRow][nowColumn].isQueen) {
 				while (!necessarilyKillEnemyQueen(field, nowRow, nowColumn, nextRow, nextColumn)) {
-					cout << "Choose another next pisition" << endl;
+					cout << "Choose another position" << endl;
 					cin >> nextRow >> nextColumn;
 				}
+				killEnemiesOnWayChecker(field, nowRow, nowColumn, nextRow, nextColumn);
 			}
 			else {
 				while (!checkEnemyBlockChecker(field, nowRow, nowColumn, nextRow, nextColumn)) {
