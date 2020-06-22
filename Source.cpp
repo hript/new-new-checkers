@@ -348,6 +348,22 @@ bool correctlyChosenNextBlockQueen(Checker** field, int nowRow, int nowColumn, i
 	return false;
 }
 
+void killEnemiesOnWayChecker(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	if (abs(nowRow - nextRow) == 2 && abs(nowColumn - nextColumn) == 2) {
+		if (nextRow < nowRow && nextColumn < nowColumn) {
+			field[nowRow - 1][nowColumn - 1].isEmpty == true;
+		}
+		if (nextRow < nowRow && nextColumn > nowColumn) {
+			field[nowRow - 1][nowColumn + 1].isEmpty == true;
+		}
+		if (nextRow > nowRow && nextColumn > nowColumn) {
+			field[nowRow + 1][nextColumn + 1].isEmpty == true;
+		}
+		if (nextRow > nowRow && nextColumn < nowColumn) {
+			field[nowRow + 1][nowColumn - 1].isEmpty == true;
+		}
+	}
+}
 
 bool yourChecker(Checker** field, int numPlayer, int row, int column) {
 	if (numPlayer % 2 == field[row][column].isWhite) {
@@ -402,6 +418,7 @@ int main() {
 					cout << "You can't move like that. Try again!" << endl;
 					cin >> nextRow >> nextColumn;
 				}
+				killEnemiesOnWayChecker(field, nowRow, nowColumn, nextRow, nextColumn);
 			}
 
 		}
