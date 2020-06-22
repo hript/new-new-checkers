@@ -365,6 +365,53 @@ void killEnemiesOnWayChecker(Checker** field, int nowRow, int nowColumn, int nex
 	}
 }
 
+void killEnemiesOnWayQueen(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	if (nextRow > nowRow && nextColumn > nowColumn) {
+		for (int i = nowRow + 1; i < nextRow; i++) {
+			for (int j = nowColumn + 1; j < nextColumn; j++) {
+				if (i - j == nowRow - nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
+						field[i][j].isEmpty = true;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow > nowRow && nextColumn < nowColumn) {
+		for (int i = nowRow + 1; i < nextRow; i++) {
+			for (int j = nextColumn; j < nowColumn; j++) {
+				if (i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+						field[i][j].isEmpty = true;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow < nowRow && nextColumn < nowColumn) {
+		for (int i = nextRow + 1; i < nowRow; i++) {
+			for (int j = nextColumn + 1; j < nowColumn; j++) {
+				if (i - j == nowRow - nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+						field[i][j].isEmpty = true;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow < nowRow && nextColumn > nowColumn) {
+		for (int i = nextRow + 1; i < nowRow; i++) {
+			for (int j = nowColumn + 1; j < nextColumn; j++) {
+				if (i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+						field[i][j].isEmpty = true;
+					}
+				}
+			}
+		}
+	}
+}
+
 bool yourChecker(Checker** field, int numPlayer, int row, int column) {
 	if (numPlayer % 2 == field[row][column].isWhite) {
 		return true;
@@ -412,6 +459,7 @@ int main() {
 					cout << "You can't move like that. Try again!" << endl;
 					cin >> nextRow >> nextColumn;
 				}
+				killEnemiesOnWayQueen(field, nowRow, nowColumn, nextRow, nextColumn);
 			}
 			else {
 				while (!correctlyChosenNextBlockChecker(field, nowRow, nowColumn, nextRow, nextColumn)) {
