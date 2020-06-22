@@ -381,7 +381,7 @@ void killEnemiesOnWayQueen(Checker** field, int nowRow, int nowColumn, int nextR
 		for (int i = nowRow + 1; i < nextRow; i++) {
 			for (int j = nextColumn; j < nowColumn; j++) {
 				if (i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
-					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
 						field[i][j].isEmpty = true;
 					}
 				}
@@ -392,7 +392,7 @@ void killEnemiesOnWayQueen(Checker** field, int nowRow, int nowColumn, int nextR
 		for (int i = nextRow + 1; i < nowRow; i++) {
 			for (int j = nextColumn + 1; j < nowColumn; j++) {
 				if (i - j == nowRow - nowColumn && field[i][j].isEmpty == false) {
-					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
 						field[i][j].isEmpty = true;
 					}
 				}
@@ -403,7 +403,7 @@ void killEnemiesOnWayQueen(Checker** field, int nowRow, int nowColumn, int nextR
 		for (int i = nextRow + 1; i < nowRow; i++) {
 			for (int j = nowColumn + 1; j < nextColumn; j++) {
 				if (i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
-					if (field[i][j].isWhite == field[nowRow][nowColumn].isWhite) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
 						field[i][j].isEmpty = true;
 					}
 				}
@@ -426,13 +426,60 @@ void moveChecker(Checker** field, int nowRow, int nowColumn, int nextRow, int ne
 
 void queen(Checker** field, int nextRow, int nextColumn) {
 	if (field[nextRow][nextColumn].isWhite == true) {
-		if (nextRow = SIZE - 1) {
+		if (nextRow == SIZE - 1) {
 			field[nextRow][nextColumn].isQueen = true;
 		}
 	}
 	else {
-		if (nextRow = 1) {
+		if (nextRow == 1) {
 			field[nextRow][nextColumn].isQueen = true;
+		}
+	}
+}
+
+bool necessarilyKillEnemyQueen(Checker** field, int nowRow, int nowColumn, int nextRow, int nextColumn) {
+	if (nextRow > nowRow && nextColumn > nowColumn) {
+		for (int i = nowRow + 1; i < nextRow; i++) {
+			for (int j = nowColumn + 1; j < nextColumn; j++) {
+				if (i - j == nowRow - nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow > nowRow && nextColumn < nowColumn) {
+		for (int i = nowRow + 1; i < nextRow; i++) {
+			for (int j = nextColumn; j < nowColumn; j++) {
+				if (i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow < nowRow && nextColumn < nowColumn) {
+		for (int i = nextRow + 1; i < nowRow; i++) {
+			for (int j = nextColumn + 1; j < nowColumn; j++) {
+				if (i - j == nowRow - nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	if (nextRow < nowRow && nextColumn > nowColumn) {
+		for (int i = nextRow + 1; i < nowRow; i++) {
+			for (int j = nowColumn + 1; j < nextColumn; j++) {
+				if (i + j == nowRow + nowColumn && field[i][j].isEmpty == false) {
+					if (field[i][j].isWhite != field[nowRow][nowColumn].isWhite) {
+						return true;
+					}
+				}
+			}
 		}
 	}
 }
@@ -472,7 +519,19 @@ int main() {
 			cout << "Choose next position" << endl;
 			cin >> nextRow >> nextColumn;
 			
-			
+			if (field[nowRow][nowColumn].isQueen) {
+				while (!necessarilyKillEnemyQueen(field, nowRow, nowColumn, nextRow, nextColumn)) {
+					cout << "Choose another next pisition" << endl;
+					cin >> nextRow >> nextColumn;
+				}
+			}
+			else {
+				while (!checkEnemyBlockChecker(field, nowRow, nowColumn, nextRow, nextColumn)) {
+					cout << "Choose another next position" << endl;
+					cin >> nextRow >> nextColumn;
+				}
+				killEnemiesOnWayChecker(field, nowRow, nowColumn, nextRow, nextColumn);
+			}
 
 		}
 		else {
